@@ -1,12 +1,11 @@
-import minimalmodbus
-minimalmodbus.TIMEOUT = 0.5
-
 class RD6006:
-    def __init__(self, port, address=1, baudrate=115200):
-        self.port = port
+    def __init__(self, client, address=1):
+        """
+        @param client A pymodbus client instance
+        @param address
+        """
+        self.client = client
         self.address = address
-        self.instrument = minimalmodbus.Instrument(port=port, slaveaddress=address)
-        self.instrument.serial.baudrate=baudrate
         regs = self._read_registers(2, 2)
         self.sn = regs[0]
         self.fw = regs[1]/100
@@ -15,24 +14,15 @@ class RD6006:
         return f"RD6006 SN:{self.sn} FW:{self.fw}"
 
     def _read_register(self, register):
-        try:
-            return self.instrument.read_register(register)
-        except minimalmodbus.NoResponseError:
-            return self._read_register(register)
+        response = self.client.read_holding_registers(register, 1, unit=self.address)
+        return response.getRegister(0)
 
     def _read_registers(self, start, length):
-        try:
-            return self.instrument.read_registers(start, length)
-        except minimalmodbus.NoResponseError:
-            return self._read_registers(start, length)
-        except minimalmodbus.InvalidResponseError:
-            return self._read_registers(start, length)
+        response = self.client.read_holding_registers(start, length, unit=self.address)
+        return response.registers
 
     def _write_register(self, register, value):
-        try:
-            return self.instrument.write_register(register, value)
-        except minimalmodbus.NoResponseError:
-            return self._write_register(register, value)
+        return self.client.write_register(register, value, unit=self.address)
 
     def _mem(self, M=0):
         """reads the 4 register of a Memory[0-9] and print on a single line"""

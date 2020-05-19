@@ -18,14 +18,14 @@ with open("README.md", "r") as fh:
 setuptools.setup(
     name="rd6006",
     version=rd6006.__version__,
-    author="Baldanos",
-    author_email="balda@balda.ch",
+    author="Baldanos, Peder Toftegaard Olsen",
+    author_email="balda@balda.ch, peder@morgendagen.dk",
     description="Python bindings for RD6006",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/Baldanos/rd6006",
+    url="https://github.com/morgendagen/rd6006",
     packages=setuptools.find_packages(),
-    install_requires=['pyserial', 'minimalmodbus'],
+    install_requires=['pyserial==3.4', 'pymodbus==2.3.0'],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: Apache Software License",
